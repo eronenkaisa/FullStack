@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -14,8 +16,8 @@ const App = () => {
   const [title, setNewTitle] = useState('')
   const [author, setNewAuthor] = useState('')
   const [url, setNewUrl] = useState('')
+  const [blogFormVisible, setBlogFormVisible] = useState(false)
 
-  const [addMessage, setAddMessage] = useState(null)
 
   useEffect(() => {
     blogService
@@ -150,6 +152,35 @@ const App = () => {
     </div>
   )
 
+  const blogForm = () => {
+
+    return (
+      <div>
+        <Togglable buttonLabel="new blog">
+          <BlogForm
+            onSubmit={addBlog}
+            title={title}
+            author={author}
+            url={url}
+            handleTitleChange={handleTitleChange}
+            handleAuthorChange={handleAuthorChange}
+            handleUrlChange={handleUrlChange}
+          />
+        </Togglable>
+      </div>
+    )
+  }
+
+
+
+  /* 
+  <div style={hideWhenVisible}>
+          <button onClick={() => setBlogFormVisible(true)}>new blog</button>
+        </div>
+        <div style={showWhenVisible}>
+  
+  <button onClick={() => setBlogFormVisible(false)}>cancel</button>
+  
   const blogForm = () => (
     <form onSubmit={addBlog}>
   
@@ -182,14 +213,13 @@ const App = () => {
         </div>
         <button type="submit">save</button>
       </form> 
-  )
+  ) */
 
   if (user === null) {
     return (
       <div>
         <h2>Log in to application</h2>
         <Notification message = {errorMessage} />
-        <Notification message = {addMessage} />
         {loginForm()}
       </div>
     )
@@ -201,12 +231,12 @@ const App = () => {
       <Notification message = {errorMessage} />
       {user.name} logged in 
 
+      
       <form onSubmit={handleLogout}>
         <button>logout</button>
       </form>
+      <br/>
       
-      <h2>create new</h2>
-
       {blogForm()}<br/>
       
       {blogs.filter(blog => blog.user.username === user.username).map(blog =>

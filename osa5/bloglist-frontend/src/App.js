@@ -24,8 +24,6 @@ const App = () => {
       .getAll()
       .then(blogs => {
         setBlogs(blogs)
-        /* console.log('blogs')
-        console.log(blogs) */
       })
   }, [])
 
@@ -66,19 +64,6 @@ const App = () => {
     }
   }
 
-  /* blogService.setToken(user.token)
-      setUser(user)
-      console.log(user)
-      setUsername('')
-      setPassword('')
-    } catch (exception) {
-      setErrorMessage('wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
-  } */
-
   const handleLogout = async (event) => {
     event.preventDefault()
     //console.log('loging out', username, password)
@@ -92,7 +77,8 @@ const App = () => {
     const blogObject = {
       title: title,
       author: author,
-      url: url
+      url: url,
+      likes: 0
     }
 
     blogService
@@ -125,13 +111,16 @@ const App = () => {
     setNewUrl(event.target.value)
   }
 
-  /*   const handleLike = (event) => {
-      const blogObject = {
-        
-      }
-      blogService.update()
-    }
-   */
+  const handleDelete = (id) => {
+    console.log('handleDelete ID:', id)
+    blogService.deleteBlog(id)
+    blogService
+      .getAll()
+      .then(blogs => {
+        setBlogs(blogs)
+      })
+  }
+
 
   const loginForm = () => (
     <div>
@@ -202,15 +191,22 @@ const App = () => {
 
       {blogForm()}<br />
 
-      {blogs.filter(blog => blog.user.username === user.username).map(blog =>
+      {blogs.filter(blog => blog.user.username === user.username).sort(function (a, b) {
+        return a.likes - b.likes;
+      })
+        .map(blog =>
 
-        <Blog key={blog.id} blog={blog} handleLike={() => blogService.update(blog.id, { user: blog.user.id, title: blog.title, author: blog.author, url: blog.url, likes: Number(blog.likes + 1) })} />
+          <Blog key={blog.id} blog={blog} handleDelete={handleDelete} />
 
-      )}
+        )}
     </div>
   )
 
 }
 
 export default App
+
+
+//() => blogService.update(blog.id, { user: blog.user.id, title: blog.title, author: blog.author, url: blog.url, likes: Number(blog.likes + 1) })
+
 

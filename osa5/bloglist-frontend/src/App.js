@@ -23,10 +23,10 @@ const App = () => {
     blogService
       .getAll()
       .then(blogs => {
-        setBlogs( blogs )
+        setBlogs(blogs)
         /* console.log('blogs')
         console.log(blogs) */
-      })  
+      })
   }, [])
 
   useEffect(() => {
@@ -50,11 +50,11 @@ const App = () => {
       /* window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user) 
       )*/
-      
+
       setUser(user)
       blogService.setToken(user.token)
       window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user) 
+        'loggedBlogappUser', JSON.stringify(user)
       )
       setUsername('')
       setPassword('')
@@ -106,11 +106,11 @@ const App = () => {
     setTimeout(() => {
       setErrorMessage(null)
     }, 5000)
-    
+
     setTimeout(() => {
       window.location.reload()
     }, 5000)
-    
+
   }
 
   const handleTitleChange = (event) => {
@@ -120,18 +120,25 @@ const App = () => {
   const handleAuthorChange = (event) => {
     setNewAuthor(event.target.value)
   }
- 
+
   const handleUrlChange = (event) => {
     setNewUrl(event.target.value)
   }
 
+  /*   const handleLike = (event) => {
+      const blogObject = {
+        
+      }
+      blogService.update()
+    }
+   */
 
   const loginForm = () => (
     <div>
       <form onSubmit={handleLogin}>
         <div>
           username
-            <input
+          <input
             type="text"
             value={username}
             name="Username"
@@ -140,10 +147,10 @@ const App = () => {
         </div>
         <div>
           password
-            <input
+          <input
             type="password"
-            value={password}            
-            name="Password"            
+            value={password}
+            name="Password"
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
@@ -153,7 +160,6 @@ const App = () => {
   )
 
   const blogForm = () => {
-
     return (
       <div>
         <Togglable buttonLabel="new blog">
@@ -172,54 +178,11 @@ const App = () => {
   }
 
 
-
-  /* 
-  <div style={hideWhenVisible}>
-          <button onClick={() => setBlogFormVisible(true)}>new blog</button>
-        </div>
-        <div style={showWhenVisible}>
-  
-  <button onClick={() => setBlogFormVisible(false)}>cancel</button>
-  
-  const blogForm = () => (
-    <form onSubmit={addBlog}>
-  
-      <div>
-          title
-            <input
-            type="text"
-            value={title}
-            name="Title"
-            onChange={handleTitleChange}
-          />
-        </div>
-        <div>
-          author
-            <input
-            type="text"
-            value={author}            
-            name="Author"            
-            onChange={handleAuthorChange}
-          />
-        </div>
-        <div>
-          url
-            <input
-            type="text"
-            value={url}            
-            name="Url"            
-            onChange={handleUrlChange}
-          />
-        </div>
-        <button type="submit">save</button>
-      </form> 
-  ) */
-
   if (user === null) {
     return (
       <div>
         <h2>Log in to application</h2>
-        <Notification message = {errorMessage} />
+        <Notification message={errorMessage} />
         {loginForm()}
       </div>
     )
@@ -228,19 +191,21 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message = {errorMessage} />
-      {user.name} logged in 
+      <Notification message={errorMessage} />
+      {user.name} logged in
 
-      
+
       <form onSubmit={handleLogout}>
         <button>logout</button>
       </form>
-      <br/>
-      
-      {blogForm()}<br/>
-      
+      <br />
+
+      {blogForm()}<br />
+
       {blogs.filter(blog => blog.user.username === user.username).map(blog =>
-        <Blog key={blog.id} blog={blog} />
+
+        <Blog key={blog.id} blog={blog} handleLike={() => blogService.update(blog.id, { user: blog.user.id, title: blog.title, author: blog.author, url: blog.url, likes: Number(blog.likes + 1) })} />
+
       )}
     </div>
   )

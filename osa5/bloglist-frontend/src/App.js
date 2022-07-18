@@ -193,12 +193,10 @@ const App = () => {
 
       {blogs.filter(blog => blog.user.username === user.username).sort(function (a, b) {
         return a.likes - b.likes;
-      })
-        .map(blog =>
-
-          <Blog key={blog.id} blog={blog} handleDelete={handleDelete} />
-
-        )}
+      }).map(blog =>
+            
+        <Blog key={blog.id} blog={blog} user={user} handleDelete={handleDelete} />
+      )}
     </div>
   )
 

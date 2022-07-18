@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, handleDelete, user }) => {
+const Blog = ({ blog, handleDelete, user, handleLike }) => {
     const [likes, setLikes] = useState(blog.likes)
     const [showDetailed, setShowDetailed] = useState(false)
 
@@ -12,11 +12,6 @@ const Blog = ({ blog, handleDelete, user }) => {
         borderWidth: 1,
         marginBottom: 5
       }
-
-    const handleLike = (id, newBlog) => {
-        blogService.update(id, newBlog)
-        setLikes((prev) => prev + 1)
-    }
 
     const handleShowClick = (event) => {
         console.log('handleSHowClick')
@@ -35,7 +30,10 @@ const Blog = ({ blog, handleDelete, user }) => {
             <div style={blogStyle}>
                 {blog.title} {blog.author}   <button onClick={handleHideClick}>hide</button> <br/>
                 {blog.url}<br/>
-                likes {likes} <button onClick={() => handleLike(blog.id, { user: blog.user.id, title: blog.title, author: blog.author, url: blog.url, likes: Number(likes + 1) })}>like</button><br/>
+                likes {likes} <button onClick={() => {
+                    handleLike(blog.id, { user: blog.user.id, title: blog.title, author: blog.author, url: blog.url, likes: Number(likes + 1) })
+                    setLikes((prev) => prev + 1)
+                    }}>like</button><br/>
                 {user.name}<br/>
 
                 <button onClick={() => handleDelete(blog.id)}>remove</button>

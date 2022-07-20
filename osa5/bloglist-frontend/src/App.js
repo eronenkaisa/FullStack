@@ -13,9 +13,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setNewTitle] = useState('')
-  const [author, setNewAuthor] = useState('')
-  const [url, setNewUrl] = useState('')
+
   const [blogFormVisible, setBlogFormVisible] = useState(false)
 
 
@@ -38,16 +36,11 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    /* console.log('logging in with', username, password) */
 
     try {
       const user = await loginService.login({
         username, password,
       })
-
-      /* window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user) 
-      )*/
 
       setUser(user)
       blogService.setToken(user.token)
@@ -66,21 +59,12 @@ const App = () => {
 
   const handleLogout = async (event) => {
     event.preventDefault()
-    //console.log('loging out', username, password)
 
     window.localStorage.clear()
     window.location.reload()
   }
 
-  const addBlog = (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: title,
-      author: author,
-      url: url,
-      likes: 0
-    }
-
+  const addBlog = (blogObject) => {
     blogService
       .create(blogObject)
       .then(returnedBlog => {
@@ -99,18 +83,6 @@ const App = () => {
 
   }
 
-  const handleTitleChange = (event) => {
-    setNewTitle(event.target.value)
-  }
-
-  const handleAuthorChange = (event) => {
-    setNewAuthor(event.target.value)
-  }
-
-  const handleUrlChange = (event) => {
-    setNewUrl(event.target.value)
-  }
-
   const handleDelete = (id) => {
     console.log('handleDelete ID:', id)
     blogService.deleteBlog(id)
@@ -121,6 +93,10 @@ const App = () => {
       })
   }
 
+  const handleLike = (id, newBlog) => {
+    blogService.update(id, newBlog)
+}
+
 
   const loginForm = () => (
     <div>
@@ -128,6 +104,7 @@ const App = () => {
         <div>
           username
           <input
+            id='username'
             type="text"
             value={username}
             name="Username"
@@ -137,13 +114,14 @@ const App = () => {
         <div>
           password
           <input
+            id='password'
             type="password"
             value={password}
             name="Password"
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button type="submit">login</button>
+        <button id='login-button' type="submit">login</button>
       </form>
     </div>
   )
@@ -153,13 +131,7 @@ const App = () => {
       <div>
         <Togglable buttonLabel="new blog">
           <BlogForm
-            onSubmit={addBlog}
-            title={title}
-            author={author}
-            url={url}
-            handleTitleChange={handleTitleChange}
-            handleAuthorChange={handleAuthorChange}
-            handleUrlChange={handleUrlChange}
+            addBlog={addBlog}
           />
         </Togglable>
       </div>
@@ -190,12 +162,12 @@ const App = () => {
       <br />
 
       {blogForm()}<br />
-
+      
       {blogs.filter(blog => blog.user.username === user.username).sort(function (a, b) {
         return a.likes - b.likes;
       }).map(blog =>
             
-        <Blog key={blog.id} blog={blog} user={user} handleDelete={handleDelete} />
+        <Blog key={blog.id} blog={blog} user={user} handleDelete={handleDelete} handleLike={handleLike} />
       )}
     </div>
   )
@@ -204,7 +176,5 @@ const App = () => {
 
 export default App
 
-
-//() => blogService.update(blog.id, { user: blog.user.id, title: blog.title, author: blog.author, url: blog.url, likes: Number(blog.likes + 1) })
 
 
